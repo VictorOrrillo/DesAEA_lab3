@@ -6,16 +6,20 @@ using System.Data;
 class Program
 {
     // Cadena de conexión a la base de datos
-    public static string connectionString = "Data Source=HUGO-PC\\SQLEXPRESS;Initial Catalog=Neptuno2;User ID=usrNeptuno;Password=123456";
+    public static string connectionString = "Data Source=LAB1504-21\\SQLEXPRESS;Initial Catalog=Tecsup2023DB;User ID=userTecsup;Password=123456";
 
 
     static void Main()
     {
-
+        var list = ListarTrabajadoresListaObjetos();
+        foreach (var item in list)
+        {
+            Console.WriteLine(item.IdTrabajador + item.Nombre + item.Apellidos + item.Sueldo + item.FechaNacimiento);
+        };
     }
 
     //De forma desconectada
-    private static DataTable ListarEmpleadosDataTable()
+    private static DataTable ListarTrabajadoresDataTable()
     {
         // Crear un DataTable para almacenar los resultados
         DataTable dataTable = new DataTable();
@@ -38,14 +42,16 @@ class Program
             // Cerrar la conexión
             connection.Close();
 
+
         }
         return dataTable;
+
     }
 
     //De forma conectada
-    private static List<Trabajadores> ListarEmpleadosListaObjetos()
+    private static List<Trabajadores> ListarTrabajadoresListaObjetos()
     {
-        List<Empleado> empleados = new List<Empleado>();
+        List<Trabajadores> trabajador = new List<Trabajadores>();
 
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
@@ -53,7 +59,7 @@ class Program
             connection.Open();
 
             // Consulta SQL para seleccionar datos
-            string query = "SELECT IdEmpleado,Nombre,Cargo FROM Empleados1";
+            string query = "SELECT IdTrabajador,Nombre,Apellidos,Sueldo,FechaNacimiento FROM Trabajadores";
 
             using (SqlCommand command = new SqlCommand(query, connection))
             {
@@ -66,11 +72,13 @@ class Program
                         {
                             // Leer los datos de cada fila
 
-                            empleados.Add(new Empleado
+                            trabajador.Add(new Trabajadores
                             {
-                                Id = (int)reader["IdEmpleado"],
+                                IdTrabajador = (int)reader["IdTrabajador"],
                                 Nombre = reader["Nombre"].ToString(),
-                                Cargo = reader["Cargo"].ToString()
+                                Apellidos = reader["Apellidos"].ToString(),
+                                Sueldo = (decimal)reader["Sueldo"],
+                                FechaNacimiento = (DateTime)reader["FechaNacimiento"]
                             });
 
                         }
@@ -83,7 +91,7 @@ class Program
 
 
         }
-        return empleados;
+        return trabajador;
 
     }
 
